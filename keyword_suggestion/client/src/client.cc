@@ -9,8 +9,8 @@ int main() {
 }
 
 void Run() {
-  reactor::Connector connector(1024, "192.168.254.163");
-  reactor::Tcp tcp(connector.Connect());
+  keyword_suggestion::Connector connector(1024, "192.168.254.163");
+  keyword_suggestion::Tcp tcp(connector.Connect());
 
   printf("\e[1m[Client]\e[0m\n");
   printf("  %s has connected\n", tcp.ConvertToString().c_str());

@@ -6,7 +6,7 @@
 
 #include <string>
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class InetAddress {
  public:
@@ -22,6 +22,6 @@ class InetAddress {
   struct sockaddr_in addr_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

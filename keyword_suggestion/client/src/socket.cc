@@ -1,6 +1,6 @@
 #include "../include/socket.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 Socket::Socket() {
   fd_ = socket(PF_INET, SOCK_STREAM, 0);
@@ -17,4 +17,4 @@ void Socket::ShutdownWrite() { ::shutdown(fd_, SHUT_WR); }
 
 int Socket::fd() { return fd_; }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

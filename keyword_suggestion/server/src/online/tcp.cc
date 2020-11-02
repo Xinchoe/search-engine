@@ -1,6 +1,6 @@
 #include "../../include/online/tcp.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 Tcp::Tcp(int fd)
     : socket_(fd),
@@ -99,4 +99,4 @@ InetAddress Tcp::GetPeerAddr(int fd) {
   return InetAddress(addr);
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

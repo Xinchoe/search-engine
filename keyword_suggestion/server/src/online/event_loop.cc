@@ -1,6 +1,6 @@
 #include "../../include/online/event_loop.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 EventLoop::EventLoop(Acceptor &acceptor)
     : acceptor_(acceptor),
@@ -123,4 +123,4 @@ void EventLoop::HandleMessage(int fd) {
   }
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

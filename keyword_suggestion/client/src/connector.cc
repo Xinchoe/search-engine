@@ -1,6 +1,6 @@
 #include "../include/connector.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 Connector::Connector(int port, const std::string &ip)
     : addr_(port, ip), socket_() {}
@@ -16,4 +16,4 @@ int Connector::Connect() {
   return socket_.fd();
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

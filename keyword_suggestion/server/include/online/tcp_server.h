@@ -5,7 +5,7 @@
 #include "event_loop.h"
 #include "tcp.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class TcpServer {
  public:
@@ -23,6 +23,6 @@ class TcpServer {
   EventLoop event_loop_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

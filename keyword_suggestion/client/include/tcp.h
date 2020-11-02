@@ -12,7 +12,7 @@
 
 const size_t kMaxSize = 65536;
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class Tcp : Noncopyable {
  public:
@@ -35,6 +35,6 @@ class Tcp : Noncopyable {
   bool is_shutdown_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

@@ -14,7 +14,7 @@
 
 const size_t kMaxSize = 65536;
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class Tcp;
 using TcpPtr = std::shared_ptr<Tcp>;
@@ -53,6 +53,6 @@ class Tcp : Noncopyable, public std::enable_shared_from_this<Tcp> {
   bool is_shutdown_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

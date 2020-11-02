@@ -8,7 +8,7 @@
 
 const int kBacklog = 8;
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class Connector {
  public:
@@ -21,6 +21,6 @@ class Connector {
   Socket socket_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

@@ -8,7 +8,7 @@
 
 const int kBacklog = 8;
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class Acceptor {
  public:
@@ -28,6 +28,6 @@ class Acceptor {
   Socket socket_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

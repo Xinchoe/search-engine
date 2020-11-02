@@ -14,3 +14,4 @@ $(BIN): $(SRCS)
 .PHONY: clean
 clean:
 	$(RM) $(BINS)
+	

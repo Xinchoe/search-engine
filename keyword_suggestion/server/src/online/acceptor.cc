@@ -1,6 +1,6 @@
 #include "../../include/online/acceptor.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 Acceptor::Acceptor(int port, const std::string &ip)
     : addr_(port, ip), socket_() {}
@@ -59,4 +59,4 @@ void Acceptor::Listen() {
   }
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

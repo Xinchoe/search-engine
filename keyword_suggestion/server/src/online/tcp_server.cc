@@ -1,6 +1,6 @@
 #include "../../include/online/tcp_server.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 TcpServer::TcpServer(int port, const std::string &ip)
     : acceptor_(port, ip), event_loop_(acceptor_) {}
@@ -24,4 +24,4 @@ void TcpServer::SetClosedCallback(const TcpCallback &&callback) {
   event_loop_.SetClosedCallback(std::move(callback));
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

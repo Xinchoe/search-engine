@@ -13,7 +13,7 @@
 #include "acceptor.h"
 #include "tcp.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 using TcpPtr = std::shared_ptr<Tcp>;
 using TcpCallback = std::function<void(const TcpPtr &connection)>;
@@ -48,6 +48,6 @@ class EventLoop {
   bool is_looping_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

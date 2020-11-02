@@ -1,6 +1,6 @@
 #include "../include/inet_address.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 InetAddress::InetAddress(const struct sockaddr_in &addr) : addr_(addr) {}
 
@@ -25,4 +25,4 @@ struct sockaddr_in *InetAddress::addr_ptr() {
   return &addr_;
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

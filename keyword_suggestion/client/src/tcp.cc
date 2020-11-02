@@ -1,6 +1,6 @@
 #include "../include/tcp.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 Tcp::Tcp(int fd)
     : socket_(fd),
@@ -25,7 +25,7 @@ void Tcp::Send() {
 std::string Tcp::Receive() {
   char buffer[kMaxSize] = {0};
 
-  int ret = socket_io_.ReadALine(buffer, sizeof(buffer));
+  socket_io_.ReadALine(buffer, sizeof(buffer));
   return static_cast<std::string>(buffer);
 }
 
@@ -64,4 +64,4 @@ InetAddress Tcp::GetPeerAddr(int fd) {
   return InetAddress(addr);
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion

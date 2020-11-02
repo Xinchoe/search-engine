@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
-namespace reactor {
+namespace keyword_suggestion {
 
 class SocketIo {
  public:
@@ -22,6 +22,6 @@ class SocketIo {
   int fd_;
 };
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
 
 #endif

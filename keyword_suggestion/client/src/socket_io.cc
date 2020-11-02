@@ -1,6 +1,6 @@
 #include "../include/socket_io.h"
 
-namespace reactor {
+namespace keyword_suggestion {
 
 SocketIo::SocketIo(int fd) : fd_(fd) {}
 
@@ -78,4 +78,4 @@ int SocketIo::ReceivePeek(char *buffer, int n) {
   return ret;
 }
 
-}  // namespace reactor
+}  // namespace keyword_suggestion
