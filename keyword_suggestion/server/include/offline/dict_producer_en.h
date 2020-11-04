@@ -1,31 +1,48 @@
 #ifndef INCLUDE_DICT_PRODUCER_EN_H_
 #define INCLUDE_DICT_PRODUCER_EN_H_
 
-#include <iostream>
+#include <dirent.h>
+#include <string.h>
+#include <unistd.h>
+
 #include <map>
+#include <set>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
+
+#include "configuration.h"
 
 namespace keyword_suggestion {
 
-class SplitTool;
-
 class DictProducerEn {
- public:
-  DictProducerEn(const std::string &dir);
+  const int kPathSize = 1024;
 
+ public:
+  DictProducerEn(const std::string &path);
+
+  void BuildStopWordLibEn(const std::string &path);
   void BuildDictEn();
-  void PushDictEn(const std::string &word);
-  void StoreDictEn(const char *file_path);
+  void BuildIndexEn();
+  void StoreDictEn(const std::string &path);
+  void StoreIndexEn(const std::string &path);
   void ShowDictEn() const;
-  void ShowFilesPathEn() const;
-  void GetFilesPathEn();
+  void ShowFilesEn() const;
+  bool IsUpperCase(char character);
+  bool IsLowerCase(char character);
+  bool IsValid(char character);
+  bool IsStopWord(const std::string &word);
 
  private:
+  void PushDictEn(const std::string &word);
+  std::vector<std::string> files_en();
+
   std::string dir_en_;
   std::vector<std::string> files_en_;
   std::map<std::string, int> dict_en_;
-  SplitTool *split_tool_en_;
+  std::unordered_map<std::string, int> stop_words_en_;
+  std::map<char, std::set<int>> index_en_;
 };
 
 }  // namespace keyword_suggestion
