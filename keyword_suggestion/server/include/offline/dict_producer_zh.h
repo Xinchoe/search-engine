@@ -1,0 +1,48 @@
+#ifndef __DICTPRODUCER_H__
+#define __DICTPRODUCER_H__
+#include <set>
+#include <string>
+#include <map>
+#include <unordered_map>
+#include <vector>
+using std::vector;
+using std::unordered_map;
+using std::map;
+using std::string;
+using std::pair;
+using std::set;
+using std::ostream;
+
+namespace keyword_suggestion
+{
+
+class SplitTool;
+class DictProducer
+{
+    friend ostream &operator<<(ostream &out,set<int> s);
+public:
+    DictProducer(const string &dir);
+    DictProducer(const string &dir,SplitTool *splitTool);
+    void buildEnDict();//创建英文字典
+    void buildCnDict();//创建中文字典
+    void storeDict(const string &filepath);//将词典写入文件
+    void showFiles()const;//查看文件路径，作测试用
+    void showDict()const;//查看词典，作为测试用
+    void getFiles();//获取文件的绝对路径
+    void pushDict(const string &word);//存储某个单词
+    void buildCnIndex();//创建中文索引    
+    void storeIndex(const string &filepath);//将索引写入文件
+    void createStopWords(const string &filepath);//创建停用词库
+    /* bool IsInStr(const string &lhs,const string &rhs);//判断一个中文字符是否在当前字符串内 */
+private:
+    string _dir_zh;//语料库文件存放路径
+    vector<string> _files_zh;//语料库文件的绝对路径集合
+    vector<pair<string,int>> _dict_zh;//词典
+    unordered_map<string ,int> _stopWords_zh;//停用词
+    unordered_map<string ,set<int>> _index_zh;//保存索引
+    SplitTool *_splitTool;//分词工具
+};
+
+}//end of namespace keyword_suggestion
+#endif
+
