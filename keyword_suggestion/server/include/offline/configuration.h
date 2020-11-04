@@ -1,6 +1,7 @@
 #ifndef INCLUDE_CONFIGURATION_H_
 #define INCLUDE_CONFIGURATION_H_
 
+#include <string.h>
 #include <unistd.h>
 
 #include <string>

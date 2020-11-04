@@ -8,6 +8,10 @@ Configuration::Configuration(const std::string &config) {
   std::string dir_path;
 
   getcwd(prefix, kPathSize);
+  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
+    prefix[i] = '\0';
+  }
+  prefix[strlen(prefix) - 1] = '\0';
   dir_path = static_cast<std::string>(prefix) + "/conf/" + config;
 
   path = fopen(dir_path.c_str(), "rb");

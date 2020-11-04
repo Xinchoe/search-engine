@@ -8,6 +8,10 @@ DictProducerEn::DictProducerEn(const std::string &path) {
   char prefix[kPathSize] = {0};
 
   getcwd(prefix, kPathSize);
+  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
+    prefix[i] = '\0';
+  }
+  prefix[strlen(prefix) - 1] = '\0';
   dir_en_ = static_cast<std::string>(prefix) + path;
 
   dir_ptr = opendir(dir_en_.c_str());
@@ -34,6 +38,10 @@ void DictProducerEn::BuildStopWordLibEn(const std::string &path) {
   std::string dir_path;
 
   getcwd(prefix, kPathSize);
+  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
+    prefix[i] = '\0';
+  }
+  prefix[strlen(prefix) - 1] = '\0';
   dir_path = static_cast<std::string>(prefix) + path;
 
   stop_words_lib = fopen(dir_path.c_str(), "rb");
@@ -115,6 +123,10 @@ void DictProducerEn::StoreDictEn(const std::string &path) {
   std::string file_path;
 
   getcwd(prefix, kPathSize);
+  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
+    prefix[i] = '\0';
+  }
+  prefix[strlen(prefix) - 1] = '\0';
   file_path = static_cast<std::string>(prefix) + path;
 
   dict = fopen(file_path.c_str(), "wb+");
@@ -130,6 +142,10 @@ void DictProducerEn::StoreIndexEn(const std::string &path) {
   std::string file_path;
 
   getcwd(prefix, kPathSize);
+  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
+    prefix[i] = '\0';
+  }
+  prefix[strlen(prefix) - 1] = '\0';
   file_path = static_cast<std::string>(prefix) + path;
 
   index = fopen(file_path.c_str(), "wb+");

@@ -10,7 +10,7 @@ int main() {
 
 void Run() {
   keyword_suggestion::Configuration path("path.conf");
-  keyword_suggestion::DictProducerEn dict_en(path.GetContent("test_corpus_en"));
+  keyword_suggestion::DictProducerEn dict_en(path.GetContent("corpus_en"));
 
   dict_en.BuildStopWordLibEn(path.GetContent("stop_words_en"));
   dict_en.BuildDictEn();
