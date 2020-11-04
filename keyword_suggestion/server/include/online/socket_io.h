@@ -10,14 +10,14 @@ namespace keyword_suggestion {
 
 class SocketIo {
  public:
-  explicit SocketIo(int);
+  explicit SocketIo(int fd);
 
-  int ReadALine(char *, int);
-  int ReadN(char *, int);
-  int WriteN(const char *, int);
+  int ReadALine(char *buffer, int n);
+  int ReadN(char *buffer, int n);
+  int WriteN(const char *buffer, int n);
 
  private:
-  int ReceivePeek(char *, int);
+  int ReceivePeek(char *buffer, int n);
 
   int fd_;
 };

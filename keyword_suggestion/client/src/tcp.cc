@@ -25,7 +25,7 @@ void Tcp::Send() {
 std::string Tcp::Receive() {
   char buffer[kMaxSize] = {0};
 
-  socket_io_.ReadALine(buffer, sizeof(buffer));
+  int ret = socket_io_.ReadALine(buffer, sizeof(buffer));
   return static_cast<std::string>(buffer);
 }
 

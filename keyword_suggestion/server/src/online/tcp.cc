@@ -2,8 +2,9 @@
 
 namespace keyword_suggestion {
 
-Tcp::Tcp(int fd)
-    : socket_(fd),
+Tcp::Tcp(int fd, EventLoop *event_loop)
+    : event_loop_(event_loop),
+      socket_(fd),
       socket_io_(fd),
       sock_addr_(GetSockAddr(fd)),
       peer_addr_(GetPeerAddr(fd)),
@@ -17,6 +18,12 @@ Tcp::~Tcp() {
 
 void Tcp::Send(const std::string &msg) {
   socket_io_.WriteN(msg.c_str(), msg.size());
+}
+
+void Tcp::SendInLoop(const std::string &msg) {
+  if (event_loop_) {
+    event_loop_->RunInLoop(std::bind(&Tcp::Send, this, msg));
+  }
 }
 
 std::string Tcp::Receive() {
@@ -35,8 +42,10 @@ std::string Tcp::ConvertToString() const {
 }
 
 void Tcp::Shutdown() {
-  is_shutdown_ = true;
-  socket_.ShutdownWrite();
+  if (!is_shutdown_) {
+    is_shutdown_ = true;
+    socket_.ShutdownWrite();
+  }
 }
 
 bool Tcp::IsConnectionClosed() {

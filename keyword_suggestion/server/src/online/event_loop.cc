@@ -6,8 +6,10 @@ EventLoop::EventLoop(Acceptor &acceptor)
     : acceptor_(acceptor),
       event_list_(1024),
       epoll_fd_(CreateEpollFd()),
-      is_looping_(false) {
+      is_looping_(false),
+      event_fd_(CreateEventfd()) {
   AddReadFd(acceptor_.GetFd());
+  AddReadFd(event_fd_);
 }
 
 void EventLoop::Loop() {
@@ -15,6 +17,14 @@ void EventLoop::Loop() {
   while (is_looping_) {
     WaitEpollFd();
   }
+}
+
+void EventLoop::RunInLoop(Functor &&callback) {
+  {
+    MutexLockGuard autolock(mutex_lock_);
+    pending_functors_.push_back(std::move(callback));
+  }
+  Wakeup();
 }
 
 void EventLoop::Unloop() { is_looping_ = false; }
@@ -78,7 +88,7 @@ void EventLoop::WaitEpollFd() {
     printf("\e[1m[Server]\e[0m\n");
     printf("  Timeout\n");
   } else {
-    if (ret == static_cast<int>(event_list_.size())) {
+    if (ret == event_list_.size()) {
       event_list_.resize(ret * 2);
     }
     for (int i = 0; i != ret; ++i) {
@@ -87,6 +97,9 @@ void EventLoop::WaitEpollFd() {
       if (event_list_[i].events & EPOLLIN) {
         if (fd == acceptor_.GetFd()) {
           HandleNewConnection();
+        } else if (fd == event_fd_) {
+          HandleRead();
+          DoPendingFunctors();
         } else {
           HandleMessage(fd);
         }
@@ -100,7 +113,7 @@ void EventLoop::HandleNewConnection() {
 
   AddReadFd(peer_fd);
 
-  TcpPtr connection(new Tcp(peer_fd));
+  TcpPtr connection(new Tcp(peer_fd, this));
 
   connection->SetConnectedCallback(Connected);
   connection->SetReceivedCallback(Received);
@@ -120,6 +133,45 @@ void EventLoop::HandleMessage(int fd) {
     connection_.erase(it);
   } else {
     it->second->HandleReceivedCallback();
+  }
+}
+
+int EventLoop::CreateEventfd() {
+  int ret = eventfd(0, 0);
+
+  if (-1 == ret) {
+    perror("eventfd");
+  }
+  return ret;
+}
+
+void EventLoop::HandleRead() {
+  uint64_t how_many = 0;
+  int ret = ::read(event_fd_, &how_many, sizeof(how_many));
+
+  if (ret != sizeof(how_many)) {
+    perror("read");
+  }
+}
+
+void EventLoop::Wakeup() {
+  u_int64_t one = 1;
+  int ret = ::write(event_fd_, &one, sizeof(one));
+
+  if (ret != sizeof(one)) {
+    perror("write");
+  }
+}
+
+void EventLoop::DoPendingFunctors() {
+  std::vector<Functor> tmp;
+
+  {
+    MutexLockGuard autoLock(mutex_lock_);
+    tmp.swap(pending_functors_);
+  }
+  for (auto &functor : tmp) {
+    functor();
   }
 }
 

@@ -7,6 +7,7 @@
 #include <sstream>
 #include <string>
 
+#include "event_loop.h"
 #include "inet_address.h"
 #include "noncopyable.h"
 #include "socket.h"
@@ -16,16 +17,18 @@ const size_t kMaxSize = 65536;
 
 namespace keyword_suggestion {
 
+class EventLoop;
 class Tcp;
 using TcpPtr = std::shared_ptr<Tcp>;
 using TcpCallback = std::function<void(const TcpPtr &connection)>;
 
 class Tcp : Noncopyable, public std::enable_shared_from_this<Tcp> {
  public:
-  Tcp(int);
+  Tcp(int fd, EventLoop *event_loop);
   ~Tcp();
 
   void Send(const std::string &msg);
+  void SendInLoop(const std::string &msg);
   std::string Receive();
   std::string ConvertToString() const;
   void Shutdown();
@@ -46,6 +49,7 @@ class Tcp : Noncopyable, public std::enable_shared_from_this<Tcp> {
   TcpCallback Received;
   TcpCallback Closed;
 
+  EventLoop *event_loop_;
   Socket socket_;
   SocketIo socket_io_;
   InetAddress sock_addr_;
