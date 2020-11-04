@@ -14,11 +14,11 @@ using std::ofstream;
 namespace keyword_suggestion
 {
 
-DictProducer::DictProducer(const string &dir)
+DictProducer_zh::DictProducer_zh(const string &dir)
 :_dir_zh(dir)
 {}
 
-DictProducer::DictProducer(const string &dir,SplitTool *splitTool)
+DictProducer_zh::DictProducer_zh(const string &dir,SplitTool *splitTool)
 :_dir_zh(dir)
 ,_splitTool(splitTool)
 {
@@ -45,7 +45,7 @@ DictProducer::DictProducer(const string &dir,SplitTool *splitTool)
     }
 }
 
-void DictProducer::createStopWords(const string &filepath)
+void DictProducer_zh::createStopWords(const string &filepath)
 {
     ifstream in(filepath);
     string word;
@@ -58,11 +58,11 @@ void DictProducer::createStopWords(const string &filepath)
     /* cout<<it->first<<" "<<it->second<<endl; */
 }
 
-void DictProducer::buildCnDict()
+void DictProducer_zh::buildCnDict()
 {
     for(auto &i:_files_zh)
     {
-        cout<<_files_zh.size()<<endl;
+        /* cout<<_files_zh.size()<<endl; */
         /* cout<<i<<endl; */
         ifstream in(i);
         string text;
@@ -104,7 +104,7 @@ void DictProducer::buildCnDict()
     }
 }
 
-void DictProducer::storeDict(const string &filepath)
+void DictProducer_zh::storeDict(const string &filepath)
 {
     ofstream out(filepath);
     for(auto &i:_dict_zh)
@@ -114,12 +114,12 @@ void DictProducer::storeDict(const string &filepath)
     }
 }
 
-void DictProducer::showFiles()const
+void DictProducer_zh::showFiles()const
 {
     cout<<_dir_zh<<endl;
 }
 
-void DictProducer::showDict()const
+void DictProducer_zh::showDict()const
 {
     for(auto &i:_dict_zh)
     {
@@ -127,7 +127,7 @@ void DictProducer::showDict()const
     }
 }
 
-void DictProducer::getFiles()
+void DictProducer_zh::getFiles()
 {
     DIR *pdir=opendir(_dir_zh.c_str());
     struct dirent *pdirent;
@@ -141,7 +141,7 @@ void DictProducer::getFiles()
     }
 }
 //创建索引，遍历字典中的每一个中文字节
-void DictProducer::buildCnIndex()
+void DictProducer_zh::buildCnIndex()
 {
     for(size_t i=0;i<_dict_zh.size();++i)
     {
@@ -154,9 +154,9 @@ void DictProducer::buildCnIndex()
     }
 }
 
-void DictProducer::storeIndex(const string &filepath)
+void DictProducer_zh::storeIndex(const string &filepath)
 {
-    cout<<"storeIndex()"<<endl;
+    /* cout<<"storeIndex()"<<endl; */
     ofstream out(filepath);
     for(auto &i:_index_zh)
     {

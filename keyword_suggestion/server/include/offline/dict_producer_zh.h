@@ -17,12 +17,12 @@ namespace keyword_suggestion
 {
 
 class SplitTool;
-class DictProducer
+class DictProducer_zh
 {
     friend ostream &operator<<(ostream &out,set<int> s);
 public:
-    DictProducer(const string &dir);
-    DictProducer(const string &dir,SplitTool *splitTool);
+    DictProducer_zh(const string &dir);
+    DictProducer_zh(const string &dir,SplitTool *splitTool);
     void buildEnDict();//创建英文字典
     void buildCnDict();//创建中文字典
     void storeDict(const string &filepath);//将词典写入文件
