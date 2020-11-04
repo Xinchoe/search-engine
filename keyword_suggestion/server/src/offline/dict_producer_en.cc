@@ -5,15 +5,8 @@ namespace keyword_suggestion {
 DictProducerEn::DictProducerEn(const std::string &path) {
   DIR *dir_ptr;
   struct dirent *dirent_ptr;
-  char prefix[kPathSize] = {0};
 
-  getcwd(prefix, kPathSize);
-  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
-    prefix[i] = '\0';
-  }
-  prefix[strlen(prefix) - 1] = '\0';
-  dir_en_ = static_cast<std::string>(prefix) + path;
-
+  dir_en_ = path;
   dir_ptr = opendir(dir_en_.c_str());
   if (dir_ptr == nullptr) {
     perror("opendir");
@@ -32,19 +25,10 @@ DictProducerEn::DictProducerEn(const std::string &path) {
   closedir(dir_ptr);
 }
 
-void DictProducerEn::BuildStopWordLibEn(const std::string &path) {
-  FILE *stop_words_lib;
-  char prefix[kPathSize] = {0}, buffer[1024] = {0};
-  std::string dir_path;
+void DictProducerEn::BuildStopWordsLibEn(const std::string &path) {
+  FILE *stop_words_lib = fopen(path.c_str(), "rb");
+  char buffer[1024] = {0};
 
-  getcwd(prefix, kPathSize);
-  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
-    prefix[i] = '\0';
-  }
-  prefix[strlen(prefix) - 1] = '\0';
-  dir_path = static_cast<std::string>(prefix) + path;
-
-  stop_words_lib = fopen(dir_path.c_str(), "rb");
   while (fscanf(stop_words_lib, "%s", buffer) != EOF) {
     stop_words_en_[static_cast<std::string>(buffer)] = stop_words_en_.size();
   }
@@ -118,18 +102,8 @@ void DictProducerEn::BuildIndexEn() {
 }
 
 void DictProducerEn::StoreDictEn(const std::string &path) {
-  FILE *dict;
-  char prefix[kPathSize] = {0};
-  std::string file_path;
+  FILE *dict = fopen(path.c_str(), "wb+");
 
-  getcwd(prefix, kPathSize);
-  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
-    prefix[i] = '\0';
-  }
-  prefix[strlen(prefix) - 1] = '\0';
-  file_path = static_cast<std::string>(prefix) + path;
-
-  dict = fopen(file_path.c_str(), "wb+");
   for (const auto &iter : dict_en_) {
     fprintf(dict, "%s %d\n", iter.first.c_str(), iter.second);
   }
@@ -137,18 +111,8 @@ void DictProducerEn::StoreDictEn(const std::string &path) {
 }
 
 void DictProducerEn::StoreIndexEn(const std::string &path) {
-  FILE *index;
-  char prefix[kPathSize] = {0};
-  std::string file_path;
+  FILE *index = fopen(path.c_str(), "wb+");
 
-  getcwd(prefix, kPathSize);
-  for (int i = strlen(prefix) - 1; prefix[i] != '/'; --i) {
-    prefix[i] = '\0';
-  }
-  prefix[strlen(prefix) - 1] = '\0';
-  file_path = static_cast<std::string>(prefix) + path;
-
-  index = fopen(file_path.c_str(), "wb+");
   for (const auto &iter : index_en_) {
     fprintf(index, "%c", iter.first);
     for (const auto &set_iter : iter.second) {

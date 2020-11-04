@@ -22,7 +22,7 @@ class DictProducerEn {
  public:
   DictProducerEn(const std::string &path);
 
-  void BuildStopWordLibEn(const std::string &path);
+  void BuildStopWordsLibEn(const std::string &path);
   void BuildDictEn();
   void BuildIndexEn();
   void StoreDictEn(const std::string &path);

@@ -1,5 +1,5 @@
 #include "../../include/offline/split_tool_cppjieba.h"
-#include "../../include/offline/cppjieba-master/include/Jieba.hpp"
+#include "../../lib/cppjieba-master/include/Jieba.hpp"
 #include <locale>
 #include <codecvt>
 

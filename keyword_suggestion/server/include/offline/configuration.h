@@ -18,6 +18,7 @@ class Configuration {
   std::string GetContent(const std::string &config);
 
  private:
+  std::string path_prefix_; 
   std::unordered_map<std::string, std::string> config_;
 };
 
