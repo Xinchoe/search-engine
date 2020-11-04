@@ -3,11 +3,11 @@
 #include <locale>
 #include <codecvt>
 
-const char* const DICT_PATH = "../../include/offline/cppjieba-master/dict/jieba.dict.utf8";
-const char* const HMM_PATH = "../../include/offline/cppjieba-master/dict/hmm_model.utf8";
-const char* const USER_DICT_PATH = "../../include/offline/cppjieba-master/dict/user.dict.utf8";
-const char* const IDF_PATH = "../../include/offline/cppjieba-master/dict/idf.utf8";
-const char* const STOP_WORD_PATH = "../../include/offline/cppjieba-master/dict/stop_words.utf8";
+const char* const DICT_PATH = "../lib/cppjieba-master/dict/jieba.dict.utf8";
+const char* const HMM_PATH = "../lib/cppjieba-master/dict/hmm_model.utf8";
+const char* const USER_DICT_PATH = "../lib/cppjieba-master/dict/user.dict.utf8";
+const char* const IDF_PATH = "../lib/cppjieba-master/dict/idf.utf8";
+const char* const STOP_WORD_PATH = "../lib/cppjieba-master/dict/stop_words.utf8";
 using namespace cppjieba;
 namespace keyword_suggestion
 {
