@@ -16,11 +16,11 @@ Tcp::~Tcp() {
   }
 }
 
-void Tcp::Send(const std::string &msg) {
-  socket_io_.WriteN(msg.c_str(), msg.size());
+void Tcp::Send(const Message &msg) {
+  socket_io_.WriteN(&msg, 4+4+msg._len);
 }
 
-void Tcp::SendInLoop(const std::string &msg) {
+void Tcp::SendInLoop(const Message &msg) {
   if (event_loop_) {
     event_loop_->RunInLoop(std::bind(&Tcp::Send, this, msg));
   }

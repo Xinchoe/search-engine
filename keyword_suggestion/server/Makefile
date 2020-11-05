@@ -4,19 +4,20 @@ RM = rm -rf
 
 SRCS_OFFLINE = $(wildcard src/offline/*.cc)
 SRCS_ONLINE = $(wildcard src/online/*.cc)
+SRCS_MYTASK = $(wildcard src/online/myTask/*.cc)
 
 BIN_OFFLINE = bin/dictionary
 BIN_ONLINE = bin/server
 BINS = $(BIN_OFFLINE) $(BIN_ONLINE)
 
-FLAGS = -lpthread -g -Wall
+FLAGS = -lpthread -ljson -g -Wall
 
 all: $(BINS)
 
 $(BIN_OFFLINE): $(SRCS_OFFLINE)
 	$(CC) $^ -o $@ $(FLAGS)
 
-$(BIN_ONLINE): $(SRCS_ONLINE)
+$(BIN_ONLINE): $(SRCS_ONLINE) $(SRCS_MYTASK)
 	$(CC) $^ -o $@ $(FLAGS)
 
 .PHONY: clean

@@ -49,9 +49,9 @@ int SocketIo::ReadN(char *buffer, int n) {
   return n - offset;
 }
 
-int SocketIo::WriteN(const char *buffer, int n) {
+int SocketIo::WriteN(const Message *buffer, int n) {
   int ret, offset = n;
-  const char *ptr = buffer;
+  const Message *ptr = buffer;
 
   while (offset > 0) {
     ret = ::write(fd_, ptr, offset);

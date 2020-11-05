@@ -110,7 +110,7 @@ void DictProducer_zh::storeDict(const string &filepath)
     for(auto &i:_dict_zh)
     {
         /* cout<<i.first<<": "<<i.second<<endl; */
-        out<<i.first<<": "<<i.second<<endl;
+        out<<i.first<<" "<<i.second<<endl;
     }
 }
 
@@ -158,6 +158,7 @@ void DictProducer_zh::storeIndex(const string &filepath)
 {
     /* cout<<"storeIndex()"<<endl; */
     ofstream out(filepath);
+
     for(auto &i:_index_zh)
     {
         out<<i.first<<" ";

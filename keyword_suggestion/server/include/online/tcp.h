@@ -12,6 +12,7 @@
 #include "noncopyable.h"
 #include "socket.h"
 #include "socket_io.h"
+#include "./myTask/message.h"
 
 const size_t kMaxSize = 65536;
 
@@ -27,8 +28,8 @@ class Tcp : Noncopyable, public std::enable_shared_from_this<Tcp> {
   Tcp(int fd, EventLoop *event_loop);
   ~Tcp();
 
-  void Send(const std::string &msg);
-  void SendInLoop(const std::string &msg);
+  void Send(const Message &msg);
+  void SendInLoop(const Message &msg);
   std::string Receive();
   std::string ConvertToString() const;
   void Shutdown();
