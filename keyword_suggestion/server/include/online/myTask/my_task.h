@@ -64,11 +64,13 @@ public:
 private:
     void statistic(set<int> & iset);  //进行计算
     int distance(const string & rhs);  //最小编辑距离
-    void response();  //响应客户端请求
+    /* void response();  //响应客户端请求 */
     size_t nBytesCode(const char ch);
     size_t length(const string &str);
     void parseWord(vector<string> & chars);
 
+    string packetJson();
+    void packetMessage(string result);
 private:
     string _queryWord;
     keyword_suggestion::TcpPtr _pConn;

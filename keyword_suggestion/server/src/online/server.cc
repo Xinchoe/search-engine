@@ -44,7 +44,7 @@ void Run() {
   dict_cn->initDictCn(conf.GetContent("dict_zh"));
   dict_cn->initIndexTableCn(conf.GetContent("index_zh"));
 
-  keyword_suggestion::TcpServer tcp_server(2000, "192.168.218.151");
+  keyword_suggestion::TcpServer tcp_server(2000, "192.168.75.128");
 
   tcp_server.SetConnectedCallback(Connected);
   tcp_server.SetReceivedCallback(std::bind(Received,std::placeholders::_1,dict_cn));

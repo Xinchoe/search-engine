@@ -1,8 +1,10 @@
 #include "../../../include/online/myTask/my_task.h"
 #include "../../../include/online/myTask/message.h"
+#include "../../../include/online/redis_.h"
 #include <algorithm>
 #include <json/json.h>
 #include <string.h>
+#include <sw/redis++/redis++.h>
 
 namespace keyword_suggestion
 {
@@ -99,7 +101,7 @@ int MyTask::distance(const string &rhs)
     return dp[lhs_len][rhs_len];
 }
 
-void MyTask::response()
+string MyTask::packetJson()
 {
     //序列化
     Json::Value arrayObj;
@@ -128,12 +130,13 @@ void MyTask::response()
         }
     
     }
-
     Json::FastWriter writer;
 
     string result=writer.write(arrayObj);
-
-    /* std::cout<<"MyTask::result="<<result<<std::endl; */
+    return result;
+}
+void MyTask::packetMessage(string result)
+{
     //消息协议
     Message mgs;
     mgs._id=100;
@@ -144,6 +147,12 @@ void MyTask::response()
     _pConn->SendInLoop(mgs);
 
 }
+
+/* void MyTask::response() */
+/* { */
+/*     string result=packetJson(); */
+    /* packetMessage(result); */
+/* } */
 void MyTask::parseWord(vector<string> & chars)
 {
     for(size_t idx=0;idx!=_queryWord.size();)
@@ -160,25 +169,44 @@ void MyTask::execute()
     int sz=nBytesCode(_queryWord[0]);
     if(sz>1)
     {
-        //2.对查询词进行分词
-        vector<string> chars;  //如，查询词：一家人，分词以后chars里分别存放：一 家 人
-        parseWord(chars);
-        
-        unordered_map<string,set<int>> indexTableCn=_pDictCn->getIndexTableCn();
-
-        //3.遍历chars,查找每一个字符的关联词
-        set<int> iset;
-        for(size_t idx=0;idx!=chars.size();++idx)
+        /* std::cout<<"_queryWord: "<<_queryWord<<std::endl; */
+        //a.首先到缓存里去查询
+        sw::redis::Redis *con=Redis<sw::redis::Redis>::getInstance();
+        auto ans=con->get(_queryWord);
+        if(ans)
         {
-            auto cnt=indexTableCn.count(chars[idx]); //chars[idx] :具体某一个字
-            if(1==cnt)
-            {
-                set<int> sets=indexTableCn[chars[idx]]; //返回该字相关联词的词典下标集合
-                std::copy(sets.begin(),sets.end(),std::insert_iterator<set<int>>(iset,iset.begin()));
-            }
+            /* std::cout<<"from redis"<<std::endl; */
+            packetMessage(*ans);
         }
-        statistic(iset);
-        response();
+        else
+        {
+            /* std::cout<<"from disk"<<std::endl; */
+            //2.对查询词进行分词
+            vector<string> chars;  //如，查询词：一家人，分词以后chars里分别存放：一 家 人
+            parseWord(chars);
+        
+            unordered_map<string,set<int>> indexTableCn=_pDictCn->getIndexTableCn();
+
+            //3.遍历chars,查找每一个字符的关联词
+            set<int> iset;
+            for(size_t idx=0;idx!=chars.size();++idx)
+            {
+                auto cnt=indexTableCn.count(chars[idx]); //chars[idx] :具体某一个字
+                if(1==cnt)
+                {
+                    set<int> sets=indexTableCn[chars[idx]]; //返回该字相关联词的词典下标集合
+                    std::copy(sets.begin(),sets.end(),std::insert_iterator<set<int>>(iset,iset.begin()));
+                }
+            }
+            statistic(iset);
+            string str=packetJson();
+            /* std::cout<<"str: "<<str<<std::endl; */
+            //插入到redis
+            con->set(_queryWord,str);            
+            packetMessage(str);
+
+
+        }
     }
 }
 //计算每一个关联词与查询词的距离，并插入优先级队列
