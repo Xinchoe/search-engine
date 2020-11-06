@@ -3,6 +3,8 @@
 
 #include "./../tcp.h"
 #include "dict_cn.h"
+#include "../dict_index_en.h"
+
 #include <iostream>
 #include <string>
 #include <queue>
@@ -17,6 +19,7 @@ using std::set;
 namespace keyword_suggestion
 {
 using DictPtr_cn=Dict_cn *;
+using DictPtr_en=dictAndIndex_en *;
 
 
 struct MyResult
@@ -57,7 +60,7 @@ struct MyCompare
 class MyTask
 {
 public:
-    MyTask(const string & queryWord,const keyword_suggestion::TcpPtr & pConn,const DictPtr_cn & pDictCn);
+    MyTask(const string & queryWord,const keyword_suggestion::TcpPtr & pConn,const DictPtr_cn & pDictCn,const DictPtr_en & pDictEn);
     
     void execute();  //执行查询
 
@@ -69,15 +72,15 @@ private:
     size_t length(const string &str);
     void parseWord(vector<string> & chars);
 
-    string packetJson();
+    string packetJson_zh();
+    string packetJson_en(const vector<string> &vec);
     void packetMessage(string result);
 private:
     string _queryWord;
     keyword_suggestion::TcpPtr _pConn;
     DictPtr_cn _pDictCn; 
     priority_queue<MyResult,vector<MyResult>,MyCompare> _resultQue;
-
-
+    DictPtr_en _pDictEn; 
 };
 } //end of namespace keyword_suggestion
 #endif

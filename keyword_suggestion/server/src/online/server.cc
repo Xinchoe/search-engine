@@ -2,6 +2,8 @@
 #include "../../include/online/thread_pool.h"
 #include "../../include/online/myTask/my_task.h"
 #include "../../include/online/myTask/configuration.h"
+#include "../../include/online/dict_index_en.h"
+
 #include <functional>
 
 keyword_suggestion::ThreadPool *thread_pool_ptr = nullptr;
@@ -25,7 +27,8 @@ keyword_suggestion::ThreadPool *thread_pool_ptr = nullptr;
 
 void Run();
 void Connected(const keyword_suggestion::TcpPtr &connection);
-void Received(const keyword_suggestion::TcpPtr &connection,const keyword_suggestion::DictPtr_cn & dict_cn );
+void Received(const keyword_suggestion::TcpPtr &connection,const keyword_suggestion::DictPtr_cn & dict_cn
+             ,const keyword_suggestion::DictPtr_en & pdict_en );
 void Closed(const keyword_suggestion::TcpPtr &connection);
 
 int main() {
@@ -44,10 +47,14 @@ void Run() {
   dict_cn->initDictCn(conf.GetContent("dict_zh"));
   dict_cn->initIndexTableCn(conf.GetContent("index_zh"));
 
-  keyword_suggestion::TcpServer tcp_server(2000, "192.168.75.128");
+  keyword_suggestion::dictAndIndex_en * dict_en=keyword_suggestion::dictAndIndex_en::getInstance();
+  dict_en->buildEnDict(conf.GetContent("dict_en"));
+  dict_en->buildEnIndex(conf.GetContent("index_en"));
+
+  keyword_suggestion::TcpServer tcp_server(2000, "192.168.5.61");
 
   tcp_server.SetConnectedCallback(Connected);
-  tcp_server.SetReceivedCallback(std::bind(Received,std::placeholders::_1,dict_cn));
+  tcp_server.SetReceivedCallback(std::bind(Received,std::placeholders::_1,dict_cn,dict_en));
   tcp_server.SetClosedCallback(Closed);
   tcp_server.Start();
 }
@@ -58,13 +65,14 @@ void Connected(const keyword_suggestion::TcpPtr &connection) {
   /* connection->Send("Welcome\n"); */
 }
 
-void Received(const keyword_suggestion::TcpPtr &connection,const keyword_suggestion::DictPtr_cn & pdict) {
+void Received(const keyword_suggestion::TcpPtr &connection,const keyword_suggestion::DictPtr_cn & pdict
+             ,const keyword_suggestion::DictPtr_en & pdict_en) {
   std::string msg = connection->Receive();
 
   printf("\e[1;36m[Client]\e[0m\n");
   printf("  %s\n", msg.c_str());
 
-  keyword_suggestion::MyTask task(msg, connection,pdict);
+  keyword_suggestion::MyTask task(msg, connection,pdict,pdict_en);
   thread_pool_ptr->AddTask(std::bind(&keyword_suggestion::MyTask::execute, task));
 }
 
