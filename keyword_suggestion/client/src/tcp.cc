@@ -15,26 +15,68 @@ Tcp::~Tcp() {
   }
 }
 
-void Tcp::Send() {
-  char buffer[kMaxSize] = {0};
-
-  fgets(buffer, sizeof(buffer), stdin);
-  socket_io_.WriteN(buffer, strlen(buffer));
-}
-
-std::string Tcp::Receive() {
-  char buffer[kMaxSize] = {0};
-
-  int ret = socket_io_.ReadALine(buffer, sizeof(buffer));
-  return static_cast<std::string>(buffer);
-}
-
-std::string Tcp::ConvertToString() const {
+void Tcp::ConvertToString() const {
   std::ostringstream oss;
 
   oss << sock_addr_.GetIp() << ":" << sock_addr_.GetPort() << " --> "
       << peer_addr_.GetIp() << ":" << peer_addr_.GetPort();
-  return oss.str();
+  printf("\e[1m[Client]\e[0m\n");
+  printf("  %s has connected\n", oss.str().c_str());
+}
+
+void Tcp::RunInLoop() {
+  bool inloop = true;
+
+  while (inloop) {
+    Receive();
+    inloop = Send();
+  }
+}
+
+void Tcp::Receive() {
+  Message msg;
+
+  socket_io_.ReadJson(msg);
+}
+
+bool Tcp::Send() {
+  Message msg;
+
+  printf("\e[1;32m[Client]\e[0m\n  ");
+  while (1) {
+    char buffer[kMaxSize];
+    int offset = 0;
+    std::string str;
+
+    memset(&msg, 0, sizeof(msg));
+    std::getline(std::cin, str);
+    strcpy(buffer, str.c_str());
+
+    if (!strcmp(buffer, "exit")) {
+      return false;
+    }
+
+    while (offset < static_cast<int>(strlen(buffer))) {
+      if (buffer[offset] == ' ') {
+        ++offset;
+      } else {
+        break;
+      }
+    }
+    if ((buffer[offset] == '1' || buffer[offset] == '2') &&
+        buffer[offset + 1] == ' ') {
+      msg.id = buffer[offset] - '0';
+      sprintf(msg.content, "%s", buffer + offset + 2);
+      msg.len = strlen(msg.content);
+      break;
+    } else {
+      printf("\e[1m[Client]\e[0m\n");
+      printf("  Please enter a valid ID\n");
+      printf("\e[1;32m[Client]\e[0m\n  ");
+    }
+  }
+  socket_io_.WriteN(&msg, sizeof(int) + sizeof(int) + msg.len);
+  return true;
 }
 
 void Tcp::Shutdown() {

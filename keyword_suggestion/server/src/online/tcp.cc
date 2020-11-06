@@ -17,7 +17,7 @@ Tcp::~Tcp() {
 }
 
 void Tcp::Send(const Message &msg) {
-  socket_io_.WriteN(&msg, 4+4+msg._len);
+  socket_io_.WriteN(&msg, sizeof(int) + sizeof(int) + msg.len);
 }
 
 void Tcp::SendInLoop(const Message &msg) {
@@ -26,11 +26,11 @@ void Tcp::SendInLoop(const Message &msg) {
   }
 }
 
-std::string Tcp::Receive() {
-  char buffer[kMaxSize] = {0};
+Message Tcp::Receive() {
+  Message msg;
 
-  socket_io_.ReadALine(buffer, sizeof(buffer));
-  return static_cast<std::string>(buffer);
+  socket_io_.ReadMessage(msg);
+  return msg;
 }
 
 std::string Tcp::ConvertToString() const {

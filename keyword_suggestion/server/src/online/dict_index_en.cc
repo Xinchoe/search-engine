@@ -5,6 +5,8 @@
 namespace keyword_suggestion
 {
 
+dictAndIndex_en *dictAndIndex_en::_pDictAndIndex_en = nullptr;
+
 void dictAndIndex_en::buildEnDict(const string & filename)
 {
     string line;

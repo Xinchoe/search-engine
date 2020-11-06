@@ -1,5 +1,5 @@
-#ifndef INCLUDE_TCP_H_
-#define INCLUDE_TCP_H_
+#ifndef KEYWORD_SUGGESTION_SERVER_INCLUDE_ONLINE_TCP_H_
+#define KEYWORD_SUGGESTION_SERVER_INCLUDE_ONLINE_TCP_H_
 
 #include <functional>
 #include <iostream>
@@ -9,10 +9,10 @@
 
 #include "event_loop.h"
 #include "inet_address.h"
+#include "message.h"
 #include "noncopyable.h"
 #include "socket.h"
 #include "socket_io.h"
-#include "./myTask/message.h"
 
 const size_t kMaxSize = 65536;
 
@@ -30,7 +30,7 @@ class Tcp : Noncopyable, public std::enable_shared_from_this<Tcp> {
 
   void Send(const Message &msg);
   void SendInLoop(const Message &msg);
-  std::string Receive();
+  Message Receive();
   std::string ConvertToString() const;
   void Shutdown();
   bool IsConnectionClosed();

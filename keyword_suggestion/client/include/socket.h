@@ -1,5 +1,5 @@
-#ifndef INCLUDE_SOCKET_H_
-#define INCLUDE_SOCKET_H_
+#ifndef KEYWORD_SUGGESTION_CLIENT_INCLUDE_SOCKET_H_
+#define KEYWORD_SUGGESTION_CLIENT_INCLUDE_SOCKET_H_
 
 #include <stdio.h>
 #include <sys/socket.h>

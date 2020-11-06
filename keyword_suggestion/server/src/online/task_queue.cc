@@ -12,7 +12,9 @@ TaskQueue::TaskQueue(size_t queue_size)
 
 bool TaskQueue::IsEmpty() const { return !queue_.size(); }
 
-bool TaskQueue::IsFull() const { return queue_.size() == queue_size_; }
+bool TaskQueue::IsFull() const {
+  return static_cast<int>(queue_.size()) == queue_size_;
+}
 
 void TaskQueue::Push(const ElemType &element) {
   MutexLockGuard auto_lock(mutex_);

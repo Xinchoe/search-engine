@@ -1,23 +1,26 @@
-#ifndef INCLUDE_SOCKET_IO_H_
-#define INCLUDE_SOCKET_IO_H_
+#ifndef KEYWORD_SUGGESTION_CLIENT_INCLUDE_SOCKET_IO_H_
+#define KEYWORD_SUGGESTION_CLIENT_INCLUDE_SOCKET_IO_H_
 
 #include <errno.h>
+#include <json/json.h>
 #include <stdio.h>
 #include <sys/socket.h>
 #include <unistd.h>
+
+#include "message.h"
 
 namespace keyword_suggestion {
 
 class SocketIo {
  public:
-  explicit SocketIo(int);
+  explicit SocketIo(int fd);
 
-  int ReadALine(char *, int);
-  int ReadN(char *, int);
-  int WriteN(const char *, int);
+  void ReadJson(Message &msg);
+  void UnpackJson(const std::string &json_str);
+  int WriteN(const Message *msg, int n);
 
  private:
-  int ReceivePeek(char *, int);
+  int ReceivePeek(char *buffer, int n);
 
   int fd_;
 };

@@ -5,8 +5,6 @@
 namespace keyword_suggestion
 {
 
-dictAndIndex_en *dictAndIndex_en::_pDictAndIndex_en = nullptr;
-
 KeyWordsQuery::KeyWordsQuery(const DictPtr_en & dictEn)
 :_pDictEn(dictEn)
 {
@@ -43,7 +41,6 @@ void KeyWordsQuery::getCandidateWords()
         }
     }
 
-    int count = 0;
     for(auto iter = candidateID.begin(); iter != candidateID.end(); ++iter){
         string candidateWord = currenDict[*iter].first;
         distance = getWordDistance(searchWord_,candidateWord);

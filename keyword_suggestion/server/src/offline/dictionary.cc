@@ -12,23 +12,23 @@ int main() {
 
 void Run() {
   keyword_suggestion::Configuration path("path");
-  keyword_suggestion::DictProducerEn dict_en(path.GetContent("corpus_en"));
+  keyword_suggestion::DictProducerEn dict_en(path.GetPath("corpus_en"));
   keyword_suggestion::SplitTool *sp;
   keyword_suggestion::SplitToolCppJieba stc;
 
   sp = &stc;
 
-  keyword_suggestion::DictProducer_zh dict_zh(path.GetContent("corpus_zh"),sp);
+  keyword_suggestion::DictProducer_zh dict_zh(path.GetPath("corpus_zh"), sp);
 
-  dict_zh.createStopWords(path.GetContent("stop_words_zh"));
+  dict_zh.createStopWords(path.GetPath("stop_words_zh"));
   dict_zh.buildCnDict();
   dict_zh.buildCnIndex();
-  dict_zh.storeDict(path.GetContent("dict_zh"));
-  dict_zh.storeIndex(path.GetContent("index_zh"));
+  dict_zh.storeDict(path.GetPath("dict_zh"));
+  dict_zh.storeIndex(path.GetPath("index_zh"));
 
-  dict_en.BuildStopWordsLibEn(path.GetContent("stop_words_en"));
+  dict_en.BuildStopWordsLibEn(path.GetPath("stop_words_en"));
   dict_en.BuildDictEn();
   dict_en.BuildIndexEn();
-  dict_en.StoreDictEn(path.GetContent("dict_en"));
-  dict_en.StoreIndexEn(path.GetContent("index_en"));
+  dict_en.StoreDictEn(path.GetPath("dict_en"));
+  dict_en.StoreIndexEn(path.GetPath("index_en"));
 }

@@ -4,54 +4,46 @@ namespace keyword_suggestion {
 
 SocketIo::SocketIo(int fd) : fd_(fd) {}
 
-int SocketIo::ReadALine(char *buffer, int size) {
-  int ret, total = 0, offset = size - 1;
-  char *ptr = buffer;
+void SocketIo::ReadJson(Message &msg) {
+  char buffer[sizeof(msg)];
+  std::string json_str;
 
-  while (offset > 0) {
-    ret = ReceivePeek(ptr, offset);
-    for (int i = 0; i < ret; i++) {
-      if (*(ptr + i) == '\n') {
-        ReadN(ptr, i + 1);
-        total += i + 1;
-        *(ptr + i) = '\0';
-        return total;
-      }
-    }
-    ReadN(ptr, ret);
-    offset -= ret;
-    ptr += ret;
-    total += ret;
+  ReceivePeek(buffer, sizeof(msg));
+  recv(fd_, &msg.len, sizeof(int), MSG_WAITALL);
+  recv(fd_, &msg.id, sizeof(int), MSG_WAITALL);
+  recv(fd_, &msg.content, msg.len, 0);
+
+  json_str = static_cast<std::string>(msg.content);
+  if (msg.id == 0) {
+    printf("\e[1;36m[Server]\e[0m\n");
+    printf("  %s\n", msg.content);
+  } else if (msg.id == 100) {
+    UnpackJson(json_str);
   }
-  *ptr = '\0';
-  return total;
 }
 
-int SocketIo::ReadN(char *buffer, int n) {
-  int ret, offset = n;
-  char *ptr = buffer;
+void SocketIo::UnpackJson(const std::string &json_str) {
+  Json::Reader *reader = new Json::Reader(Json::Features::strictMode());
+  Json::Value root;
 
-  while (offset > 0) {
-    ret = ::read(fd_, ptr, offset);
-    if (ret == -1) {
-      if (errno == EINTR) {
-        continue;
+  if (reader->parse(json_str, root)) {
+    if (root.isArray()) {
+      int array_size = root.size();
+
+      printf("\e[1;36m[Server]\e[0m\n");
+      printf("  Condidate words:\n");
+      for (int i = 0; i < array_size; ++i) {
+        std::string word = root[i]["candidate"].asString();
+
+        printf("  * %s\n", word.c_str());
       }
-      perror("read");
-      return n - offset;
-    } else if (!ret) {
-      return n - offset;
-    } else {
-      offset -= ret;
-      ptr += ret;
     }
   }
-  return n - offset;
 }
 
-int SocketIo::WriteN(const char *buffer, int n) {
+int SocketIo::WriteN(const Message *msg, int n) {
   int ret, offset = n;
-  const char *ptr = buffer;
+  const Message *ptr = msg;
 
   while (offset > 0) {
     ret = ::write(fd_, ptr, offset);

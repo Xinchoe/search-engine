@@ -8,17 +8,18 @@ SRCS_MYTASK = $(wildcard src/online/myTask/*.cc)
 
 BIN_OFFLINE = bin/dictionary
 BIN_ONLINE = bin/server
-BINS = $(BIN_OFFLINE) $(BIN_ONLINE)
 
-FLAGS =-lredis++ -lhiredis -lpthread -ljson -g -Wall
+FLAGS = -lpthread -g -Wall
+REDIS = -lredis++ -lhiredis
+JSON = -ljson
 
-all: $(BINS)
+all: $(BIN_OFFLINE) $(BIN_ONLINE)
 
 $(BIN_OFFLINE): $(SRCS_OFFLINE)
 	$(CC) $^ -o $@ $(FLAGS)
 
 $(BIN_ONLINE): $(SRCS_ONLINE) $(SRCS_MYTASK)
-	$(CC) -std=c++11 $^ -o $@ $(FLAGS)
+	$(CC) $^ -o $@ $(FLAGS) $(REDIS) $(JSON)
 
 .PHONY: clean
 clean:

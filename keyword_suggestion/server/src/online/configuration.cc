@@ -1,4 +1,4 @@
-#include "../../include/offline/configuration.h"
+#include "../../include/online/configuration.h"
 
 namespace keyword_suggestion {
 

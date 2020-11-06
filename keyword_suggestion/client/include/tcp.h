@@ -1,11 +1,14 @@
-#ifndef INCLUDE_TCP_H_
-#define INCLUDE_TCP_H_
+#ifndef KEYWORD_SUGGESTION_CLIENT_INCLUDE_TCP_H_
+#define KEYWORD_SUGGESTION_CLIENT_INCLUDE_TCP_H_
 
+#include <cstdio>
 #include <iostream>
+#include <limits>
 #include <sstream>
 #include <string>
 
 #include "inet_address.h"
+#include "message.h"
 #include "noncopyable.h"
 #include "socket.h"
 #include "socket_io.h"
@@ -19,9 +22,10 @@ class Tcp : Noncopyable {
   Tcp(int);
   ~Tcp();
 
-  void Send();
-  std::string Receive();
-  std::string ConvertToString() const;
+  void ConvertToString() const;
+  void RunInLoop();
+  bool Send();
+  void Receive();
   void Shutdown();
 
  private:

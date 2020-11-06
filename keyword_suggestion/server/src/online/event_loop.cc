@@ -79,7 +79,7 @@ void EventLoop::WaitEpollFd() {
 
   do {
     ret = ::epoll_wait(epoll_fd_, &*event_list_.begin(), event_list_.size(),
-                       5000);
+                       30000);
   } while (ret == -1 && errno == EINTR);
   if (ret == -1) {
     perror("epoll_wait");
@@ -88,7 +88,7 @@ void EventLoop::WaitEpollFd() {
     printf("\e[1m[Server]\e[0m\n");
     printf("  Timeout\n");
   } else {
-    if (ret == event_list_.size()) {
+    if (ret == static_cast<int>(event_list_.size())) {
       event_list_.resize(ret * 2);
     }
     for (int i = 0; i != ret; ++i) {
