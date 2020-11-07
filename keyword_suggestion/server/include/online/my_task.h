@@ -64,6 +64,7 @@ class MyTask {
 
  private:
   Message msg_;
+  std::string _queryWord;
   keyword_suggestion::TcpPtr _pConn;
   DictPtr_cn _pDictCn;
   priority_queue<MyResult, vector<MyResult>, MyCompare> _resultQue;

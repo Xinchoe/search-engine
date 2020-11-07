@@ -1,5 +1,15 @@
 ## README
 
+### 开发环境
+
+* Linux: Ubuntu18.04
+* g++: 7.5.0
+* redis: 6.0.8
+* hiredis: 1.0.0
+* redis-plus-plus
+* cppjieba
+* jsoncpp
+
 ### 推荐编码规范
 
 * [Google 开源项目风格指南 (中文版)](https://github.com/zh-google-styleguide/zh-google-styleguide)

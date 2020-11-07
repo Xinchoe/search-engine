@@ -26,6 +26,8 @@ class Tcp : Noncopyable {
   void RunInLoop();
   bool Send();
   void Receive();
+  bool IsValid(char *word);
+  bool IsLetter(char ch);
   void Shutdown();
 
  private:

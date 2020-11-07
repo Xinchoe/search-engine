@@ -25,17 +25,23 @@ void SocketIo::ReadJson(Message &msg) {
 void SocketIo::UnpackJson(const std::string &json_str) {
   Json::Reader *reader = new Json::Reader(Json::Features::strictMode());
   Json::Value root;
+  std::string content;
 
   if (reader->parse(json_str, root)) {
     if (root.isArray()) {
       int array_size = root.size();
 
       printf("\e[1;36m[Server]\e[0m\n");
-      printf("  Condidate words:\n");
-      for (int i = 0; i < array_size; ++i) {
-        std::string word = root[i]["candidate"].asString();
+      content = root[static_cast<Json::Value::UInt>(0)]["candidate"].asString();
+      if (!::strlen(content.c_str())) {
+        printf("  Not found\n");
+      } else {
+        printf("  Condidate words:\n");
+        for (int i = 0; i < array_size; ++i) {
+          std::string word = root[i]["candidate"].asString();
 
-        printf("  * %s\n", word.c_str());
+          printf("  * %s\n", word.c_str());
+        }
       }
     }
   }

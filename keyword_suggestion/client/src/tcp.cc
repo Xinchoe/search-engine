@@ -67,6 +67,12 @@ bool Tcp::Send() {
         buffer[offset + 1] == ' ') {
       msg.id = buffer[offset] - '0';
       sprintf(msg.content, "%s", buffer + offset + 2);
+      if (!IsValid(msg.content)) {
+        printf("\e[1m[Client]\e[0m\n");
+        printf("  Please enter a valid word\n");
+        printf("\e[1;32m[Client]\e[0m\n  ");
+        continue;
+      }
       msg.len = strlen(msg.content);
       break;
     } else {
@@ -77,6 +83,29 @@ bool Tcp::Send() {
   }
   socket_io_.WriteN(&msg, sizeof(int) + sizeof(int) + msg.len);
   return true;
+}
+
+bool Tcp::IsValid(char *word) {
+  if (word[0] & (1 << 7)) {
+    for (size_t i = 1; i < strlen(word); ++i) {
+      if (!(word[i] & (1 << 7))) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    for (size_t i = 0; i < strlen(word); ++i) {
+      if (!IsLetter(word[i]) &&
+          !(i && word[i] == '-' && IsLetter(word[i - 1]))) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+bool Tcp::IsLetter(char ch) {
+  return ('A' <= ch && ch <= 'Z') || ('a' <= ch && ch <= 'z');
 }
 
 void Tcp::Shutdown() {

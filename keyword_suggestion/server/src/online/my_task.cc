@@ -14,7 +14,9 @@ namespace keyword_suggestion {
 
 MyTask::MyTask(Message &msg, const TcpPtr &pConn, const DictPtr_cn &dictCn,
                const DictPtr_en &dictEn)
-    : msg_(msg), _pConn(pConn), _pDictCn(dictCn), _pDictEn(dictEn) {}
+    : _pConn(pConn), _pDictCn(dictCn), _pDictEn(dictEn) {
+  _queryWord = msg.content;
+}
 
 //判断字符的字节数/区分查询词是中文还是英文
 size_t MyTask::nBytesCode(const char ch) {
@@ -47,9 +49,9 @@ size_t MyTask::length(const string &str) {
 
 //最小编辑距离（中英文都合适）
 int MyTask::distance(const string &rhs) {
-  int lhs_len = length(msg_.content);  //字符长
+  int lhs_len = length(_queryWord);  //字符长
   int rhs_len = length(rhs);
-  int blhs_len = strlen(msg_.content);  //字节长
+  int blhs_len = _queryWord.size();  //字节长
   int brhs_len = rhs.size();
 
   //如果lhs或rhs为空串
@@ -71,10 +73,8 @@ int MyTask::distance(const string &rhs) {
 
   string sublhs, subrhs;
   for (int i = 1, lhs_idx = 0; i < lhs_len + 1 && lhs_idx < blhs_len; ++i) {
-    size_t nByte = nBytesCode(msg_.content[lhs_idx]);
-    for (int j = lhs_idx; j < lhs_idx + static_cast<int>(nByte) - 1; ++j) {
-      sublhs += msg_.content[j];
-    }
+    size_t nByte = nBytesCode(_queryWord[lhs_idx]);
+    sublhs = _queryWord.substr(lhs_idx, nByte);
     lhs_idx += nByte;
 
     for (int j = 1, rhs_idx = 0; j < rhs_len + 1 && rhs_idx < brhs_len; ++j) {
@@ -126,30 +126,36 @@ string MyTask::packetJson_zh() {
 string MyTask::packetJson_en(const vector<string> &vec) {
   //序列化
   Json::Value arrayObj;
-  for (int i = 0; i < 5; ++i)  //返回优先级队列的前3个元素
-  {
+
+  int sz = vec.size();
+  if (0 == sz) {
     Json::Value item;
-    string candidate = vec[i];
+    string candidate = "";
     item["candidate"] = candidate;
     arrayObj.append(item);
+  } else {
+    for (int i = 0; i < 5; ++i) {
+      Json::Value item;
+      string candidate = vec[i];
+      item["candidate"] = candidate;
+      arrayObj.append(item);
+    }
   }
-
   Json::FastWriter writer;
 
   string result = writer.write(arrayObj);
-
   return result;
 }
 
 void MyTask::packetMessage(string result) {
   //消息协议
-  Message message;
-  message.id = 100;
-  message.len = result.size();
-  /* std::cout<<"result.size()="<<message._len<<std::endl; */
-  strcpy(message.content, result.c_str());
+  Message mgs;
+  mgs.id = 100;
+  mgs.len = result.size();
+  /* std::cout<<"result.size()="<<mgs._len<<std::endl; */
+  strcpy(mgs.content, result.c_str());
   //交给主线程
-  _pConn->SendInLoop(message);
+  _pConn->SendInLoop(mgs);
 }
 
 /* void MyTask::response() */
@@ -158,27 +164,22 @@ void MyTask::packetMessage(string result) {
 /* packetMessage(result); */
 /* } */
 void MyTask::parseWord(vector<string> &chars) {
-  for (size_t idx = 0; idx != strlen(msg_.content);) {
-    int nByte = nBytesCode(msg_.content[idx]);
-    std::string tmp;
-
-    for (size_t i = idx; i < idx + nByte - 1; ++i) {
-      tmp += msg_.content[i];
-    }
-    chars.push_back(tmp);
+  for (size_t idx = 0; idx != _queryWord.size();) {
+    int nByte = nBytesCode(_queryWord[idx]);
+    chars.push_back(_queryWord.substr(idx, nByte));
     idx += nByte;
   }
 }
 
 void MyTask::execute() {
   // 1.判断查询词是中文还是英文
-  int sz = nBytesCode(msg_.content[0]);
+  int sz = nBytesCode(_queryWord[0]);
   if (sz > 1)  //中文
   {
-    /* std::cout<<"msg_.content: "<<msg_.content<<std::endl; */
+    /* std::cout<<"_queryWord: "<<_queryWord<<std::endl; */
     // a.首先到缓存里去查询
     sw::redis::Redis *con = Redis<sw::redis::Redis>::getInstance();
-    auto ans = con->get(msg_.content);
+    auto ans = con->get(_queryWord);
     if (ans) {
       /* std::cout<<"from redis"<<std::endl; */
       packetMessage(*ans);
@@ -207,27 +208,27 @@ void MyTask::execute() {
       string str = packetJson_zh();
       /* std::cout<<"str: "<<str<<std::endl; */
       //插入到redis
-      con->set(msg_.content, str);
+      con->set(_queryWord, str);
       packetMessage(str);
     }
   } else  //英文
   {
-    /* std::cout<<"msg_.content: "<<msg_.content<<std::endl; */
+    /* std::cout<<"_queryWord: "<<_queryWord<<std::endl; */
     // a.首先到缓存里去查询
     sw::redis::Redis *con = Redis<sw::redis::Redis>::getInstance();
-    auto ans = con->get(msg_.content);
+    auto ans = con->get(_queryWord);
     if (ans) {
       /* std::cout<<"from redis"<<std::endl; */
       packetMessage(*ans);
     } else {
       vector<string> vec;
       KeyWordsQuery findWord(_pDictEn);
-      vec = findWord.doQuery(msg_.content);
+      vec = findWord.doQuery(_queryWord);
 
       string str = packetJson_en(vec);
       /* std::cout<<"str: "<<str<<std::endl; */
       //插入到redis
-      con->set(msg_.content, str);
+      con->set(_queryWord, str);
       packetMessage(str);
     }
   }
@@ -239,7 +240,9 @@ void MyTask::statistic(set<int> &iset) {
 
   for (auto &idx : iset) {
     int dist = distance(dictCn[idx].first);
-    _resultQue.push(MyResult(dictCn[idx].first, dictCn[idx].second, dist));
+    if (dist < 5) {
+      _resultQue.push(MyResult(dictCn[idx].first, dictCn[idx].second, dist));
+    }
   }
 }
 

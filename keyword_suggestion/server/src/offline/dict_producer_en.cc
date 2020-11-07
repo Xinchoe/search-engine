@@ -85,7 +85,7 @@ void DictProducerEn::BuildIndexEn() {
     std::string word = iter->first;
 
     for (auto c : word) {
-      if (IsLowerCase(c)) {
+      if (IsLowerCase(c) || c == '-') {
         std::map<char, std::set<int>>::iterator index_iter = index_en_.find(c);
 
         if (index_iter == index_en_.end()) {
