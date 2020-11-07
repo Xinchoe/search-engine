@@ -4,11 +4,11 @@
 
 * Linux: Ubuntu18.04
 * g++: 7.5.0
+* jsoncpp: 0.5.0
 * redis: 6.0.8
 * hiredis: 1.0.0
 * redis-plus-plus
 * cppjieba
-* jsoncpp
 
 ### 推荐编码规范
 
